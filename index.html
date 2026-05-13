@@ -248,6 +248,34 @@
         <input type="text" id="productName" placeholder="트위드 더블 자켓">
       </div>
 
+      <div class="field">
+        <label>상품코드 (내부용 · 디스플레이엔 노출 안됨)</label>
+        <input type="text" id="productCode" placeholder="예: BAL-TW-001">
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>카테고리</label>
+          <select id="category" style="width:100%;padding:10px;border:1px solid #d9d6cd;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;">
+            <option value="">선택하세요</option>
+            <option value="가방">가방</option>
+            <option value="구두">구두</option>
+            <option value="상의">상의</option>
+            <option value="하의">하의</option>
+            <option value="원피스">원피스</option>
+            <option value="악세사리">악세사리</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>성별</label>
+          <select id="gender" style="width:100%;padding:10px;border:1px solid #d9d6cd;border-radius:6px;background:#fff;font-family:inherit;font-size:14px;">
+            <option value="">선택하세요</option>
+            <option value="여성">여성</option>
+            <option value="남성">남성</option>
+          </select>
+        </div>
+      </div>
+
       <div class="row2">
         <div class="field">
           <label>정가 (원)</label>
@@ -295,7 +323,7 @@
 <script>
 // ===== CONFIG =====
 // 백엔드 Apps Script URL (현재는 데모 모드 — 향후 슬라이드 등록 연동 시 사용)
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNDbcLdK87-twc3VMgWZIUIzVLr7wMJoRQ04KyDypCjZjlH1_DVb0fesI8DjoEJ0ppsg/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAEUUGY8TPB05iHf__-rKL_XCLPLiiF06788AHzfblsuZsrCDSx0exmxzTyIZnHWojxQ/exec';
 
 const STORE_NAMES = {
   gangnam: '강남 본점',
@@ -431,6 +459,11 @@ function renderSlides() {
 
           <div class="brand">${s.brandEn} <span style="font-size:12px;color:#888;font-family:'Noto Sans KR';font-weight:500;">${s.brandKr}</span></div>
           <div class="product">${s.productName}</div>
+          <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;">
+            ${s.category ? `<span style="font-size:10px;color:#1c3829;background:#eef4f0;padding:2px 8px;border-radius:999px;font-weight:600;">${s.category}</span>` : ''}
+            ${s.gender ? `<span style="font-size:10px;color:#7a4b1a;background:#faf2e6;padding:2px 8px;border-radius:999px;font-weight:600;">${s.gender}</span>` : ''}
+          </div>
+          ${s.productCode ? `<div style="font-size:11px;color:#888;font-family:'Inter',monospace;margin-top:4px;">CODE · ${s.productCode}</div>` : ''}
           <div class="prices">
             <span class="orig">${fmtWon(s.original)}</span>
             <span class="sale">${fmtWon(s.sale)}</span>
@@ -480,10 +513,15 @@ document.getElementById('registerBtn').addEventListener('click', async () => {
   const brandEn = document.getElementById('brandEn').value.trim();
   const brandKr = document.getElementById('brandKr').value.trim();
   const productName = document.getElementById('productName').value.trim();
+  const productCode = document.getElementById('productCode').value.trim();
+  const category = document.getElementById('category').value;
+  const gender = document.getElementById('gender').value;
   const original = parseInt(document.getElementById('originalPrice').value) || 0;
   const sale = parseInt(document.getElementById('salePrice').value) || 0;
 
   if (!brandEn) { alert('브랜드명을 입력하세요.'); return; }
+  if (!category) { alert('카테고리를 선택하세요.'); return; }
+  if (!gender) { alert('성별(여성/남성)을 선택하세요.'); return; }
   if (!sale) { alert('판매가를 입력하세요.'); return; }
   if (!currentImageData) {
     if (!confirm('이미지 없이 등록하시겠습니까?')) return;
@@ -497,7 +535,8 @@ document.getElementById('registerBtn').addEventListener('click', async () => {
       method: 'POST',
       body: JSON.stringify({
         action: 'add_slide',
-        title, brandEn, brandKr, productName,
+        title, brandEn, brandKr, productName, productCode,
+        category, gender,
         original, sale, image: currentImageData
       })
     });
@@ -517,7 +556,7 @@ document.getElementById('registerBtn').addEventListener('click', async () => {
 });
 
 document.getElementById('resetBtn').addEventListener('click', () => {
-  ['title','brandEn','brandKr','productName','originalPrice','salePrice'].forEach(id => document.getElementById(id).value = '');
+  ['title','brandEn','brandKr','productName','productCode','category','gender','originalPrice','salePrice'].forEach(id => document.getElementById(id).value = '');
   currentImageData = null;
   previewImg.style.display = 'none';
   fileNameTxt.style.display = 'block';
