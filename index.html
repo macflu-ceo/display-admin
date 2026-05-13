@@ -219,7 +219,7 @@
       <h2>새 슬라이드 등록</h2>
 
       <div class="field">
-        <label>타이틀 (상단 표기)</label>
+        <label>타이틀 (상단 표기) · 예: 지금만 이 가격, 이번 주 추천, 리미티드 에디션</label>
         <input type="text" id="title" placeholder="" value="">
       </div>
 
@@ -509,10 +509,9 @@ function renderSlides() {
 
 // ===== REGISTER (API 연결) =====
 document.getElementById('registerBtn').addEventListener('click', async () => {
-  const title = document.getElementById('title').value.trim();
   const brandEn = document.getElementById('brandEn').value.trim();
   const brandKr = document.getElementById('brandKr').value.trim();
-  const productName = document.getElementById('productName').value.trim();
+  const productName = document.getElementById('productName').value.trim();  const title = document.getElementById('title').value.trim();
   const productCode = document.getElementById('productCode').value.trim();
   const category = document.getElementById('category').value;
   const gender = document.getElementById('gender').value;
